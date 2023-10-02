@@ -26,5 +26,5 @@ jobs:
         with:
           projectKey: your-project-key # Replace with your SonarQube project key
           projectName: Your Project Name # Replace with your project name
-          serverUrl: https://your-sonarqube-server-url
-          token: ${{ secrets.SONARQUBE_AUTH_TOKEN }} # Create a GitHub secret for your SonarQube authentication token
+          serverUrl: https://http://localhost:8282/
+          token: ${{ secrets.SONARQUBE_AUTH_TOKEN }}
