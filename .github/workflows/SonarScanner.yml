@@ -1,0 +1,22 @@
+name: SonarCloud Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up SonarScanner
+      uses: sonarsource/sonar-scanner-cli@v1
+
+    - name: Run SonarScanner
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: sonar-scanner
