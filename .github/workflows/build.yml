@@ -1,23 +1,30 @@
-name: SonarCloud Analysis with Quality Gate and SonarScanner
+name: 'SonarCloud Analysis'
+author: 'Tiago Monteiro DECSKILL'
+description: 'Cloud Pipeline'
+inputs:
+  LANGUAGE_VERSION:
+    description: 'LANGUAGE_VERSION'
+    required: true  
+  SONAR_PROJECT_KEY:
+    description: 'SonarCloud Project Key'
+    required: true
+  SONAR_ORGANIZATION:
+    description: 'SonarCloud Organization'
+    required: true
+  SONAR_TOKEN:
+    description: 'SonarCloud Token'
+    required: true
 
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  sonarcloud:
-    name: Analyze with SonarCloud
-    runs-on: ubuntu-latest
-
-    steps:
+runs:
+  using: 'composite'
+  steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 2.0
+          dotnet-version: 5.x
 
       - name: Install SonarScanner
         run: |
@@ -28,20 +35,16 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: SonarCloud Analysis
-        env:
-          # Set your SonarCloud project key and organization here
-          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
-          dotnet-sonarscanner begin /k:"$SONAR_PROJECT_KEY" /o:"$SONAR_ORGANIZATION" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions="**/bin/**/*,**/obj/**/*" /d:sonar.coverage.exclusions="**/bin/**/*,**/obj/**/*" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml
+          dotnet-sonarscanner begin /k:"${{ inputs.SONAR_PROJECT_KEY }}" /o:"${{ inputs.SONAR_ORGANIZATION }}" /d:sonar.login="${{ inputs.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions="**/bin/**/*,**/obj/**/*" /d:sonar.coverage.exclusions="**/bin/**/*,**/obj/**/*" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml
           dotnet build --configuration Release
           dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet-sonarscanner end /d:sonar.login="${{ inputs.SONAR_TOKEN }}"
 
       - name: Check Quality Gate Status
         run: |
           echo "Checking SonarCloud Quality Gate Status..."
-          status=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY&branch=main" | jq -r '.projectStatus.status')
+          status=$(curl -s -u "${{ inputs.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${{ inputs.SONAR_PROJECT_KEY }}&branch=main" | jq -r '.projectStatus.status')
           if [[ $status != "OK" ]]; then
             echo "Quality Gate check failed: $status"
             exit 1
@@ -50,6 +53,8 @@ jobs:
           fi
 
       - name: Upload SonarCloud Analysis
-        uses: sonarsource/sonarcloud-github-action@v1
+        uses: actions/upload-artifact@main
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          name: sonarcloud-artifact
+          path: .
+          retention-days: 1
