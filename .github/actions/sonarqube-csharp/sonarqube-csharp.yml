@@ -1,0 +1,33 @@
+name: SonarQube Analysis for C#
+author: Tiago Monteiro
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.0
+
+    - name: Install SonarScanner
+      run: |
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+        unzip sonar-scanner-cli-4.6.2.2472-linux.zip
+        export PATH=$PATH:$(pwd)/sonar-scanner-4.6.2.2472-linux/bin
+
+    - name: SonarQube Analysis
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=your_project_key \
+          -Dsonar.sources=./src
+          -Dsonar.host.url=https://your-sonarqube-server-url
+          -Dsonar.login=your-sonarqube-token
