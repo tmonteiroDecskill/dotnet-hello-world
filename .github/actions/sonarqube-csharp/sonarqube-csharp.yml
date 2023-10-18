@@ -26,7 +26,7 @@ jobs:
     - name: SonarQube Analysis
       run: |
         sonar-scanner \
-          -Dsonar.projectKey=your_project_key \
-          -Dsonar.sources=.
-          -Dsonar.host.url=https://your-sonarqube-server-url
-          -Dsonar.login=your-sonarqube-token
+          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+          -Dsonar.sources=. #url do repo
+          -Dsonar.host.url= ${{ secrets.SONAR_HOST_URL }}
+          -Dsonar.login= ${{ secrets.SONAR_TOKEN }}
