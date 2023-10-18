@@ -21,6 +21,6 @@ jobs:
 
       - name: csharp
         if: ${{ inputs.LANGUAGE == 'csharp' }}
-        uses: <your-csharp-action-repository>/<your-action-name>
+        uses: .github\actions\sonarqube-csharp\sonarqube-csharp.yml
         with:
           LANGUAGE_VERSION: ${{ inputs.LANGUAGE_VERSION }}
