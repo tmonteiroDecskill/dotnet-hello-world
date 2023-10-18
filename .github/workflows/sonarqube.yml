@@ -23,3 +23,5 @@ jobs:
         uses: ./.github/actions/sonarqube-csharp@main
         with:
           LANGUAGE_VERSION: ${{ inputs.LANGUAGE_VERSION }}
+      - name: Checkout code
+        uses: actions/checkout@v2
