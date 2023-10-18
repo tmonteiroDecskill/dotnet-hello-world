@@ -20,7 +20,7 @@ jobs:
 
       - name: csharp
         if: ${{ inputs.LANGUAGE == 'csharp' }}
-        uses: tmonteiroDecskill/dotnet-hello-world/.github/actions/sonarqube-csharp/action.yml
+        uses: tmonteiroDecskill/dotnet-hello-world/.github/actions/sonarqube-csharp
         with:
           LANGUAGE_VERSION: ${{ inputs.LANGUAGE_VERSION }}
       - name: Checkout code
