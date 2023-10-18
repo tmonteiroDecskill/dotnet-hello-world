@@ -28,6 +28,6 @@ jobs:
       run: |
         sonar-scanner \
           -Dsonar.projectKey=your_project_key \
-          -Dsonar.sources=./src
+          -Dsonar.sources=.
           -Dsonar.host.url=https://your-sonarqube-server-url
           -Dsonar.login=your-sonarqube-token
