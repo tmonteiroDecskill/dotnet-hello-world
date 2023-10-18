@@ -1,5 +1,4 @@
 name: CSHARP SONARQUBE
-author: Tiago Monteiro
 on:
   workflow_dispatch:
     inputs:
